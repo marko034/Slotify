@@ -1,0 +1,177 @@
+@host = http://localhost:5118
+
+### Registracija igrača
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{ "email": "igrac@test.com", "password": "Test1234", "fullName": "Igrač Test" }
+
+### Prijava vlasnika (podaci iz Seed:OwnerEmail i Seed:OwnerPassword)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "marko.markoilic@gmail.com", "password": "ChangeMe123!" }
+
+### Prijava igrača
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "igrac@test.com", "password": "Test1234" }
+
+
+### Ko sam ja (nalepi accessToken iz odgovora na login)
+GET {{host}}/api/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0MzE5MTE5LCJzdWIiOiI0OTIzMmZkMi03NjU1LTQ4MTMtYjljOC1iMTU1NmE5YTcyZDgiLCJlbWFpbCI6Im1hcmtvLm1hcmtvaWxpY0BnbWFpbC5jb20iLCJyb2xlIjoiT3duZXIiLCJpYXQiOjE3OTQzMTgyMTksIm5iZiI6MTc5NDMxODIxOX0.zf9T9BI55s2MoRiBehMHZtTNIrptq9YTOEYMOyIocxI
+
+### Refresh (nalepi refreshToken iz odgovora na login)
+POST {{host}}/api/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "<refreshToken>" }
+
+### Podešavanja sale
+PUT {{host}}/api/venue
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0MzQyNzg5LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDM0MTg4OSwibmJmIjoxNzk0MzQxODg5fQ.PEp2AILcYgPXUMgYns6DLLkaGNzJFcplcnk_ETSCCQk
+Content-Type: application/json
+
+{ "name": "TT Klub Test", "address": "Ulica 1, Kragujevac", "timeZoneId": "Europe/Belgrade" }
+
+### Tip stola
+POST {{host}}/api/resource-types
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0MzQyOTQyLCJzdWIiOiI0OTIzMmZkMi03NjU1LTQ4MTMtYjljOC1iMTU1NmE5YTcyZDgiLCJlbWFpbCI6Im1hcmtvLm1hcmtvaWxpY0BnbWFpbC5jb20iLCJyb2xlIjoiT3duZXIiLCJpYXQiOjE3OTQzNDIwNDIsIm5iZiI6MTc5NDM0MjA0Mn0.zuk2VkJ6OCzbRPrEW1bcImOqiUmby1Ufkkbq_T5sdOA
+Content-Type: application/json
+
+{
+  "name": "Sto za stoni tenis",
+  "slotMinutes": 30,
+  "minDurationMinutes": 60,
+  "maxDurationMinutes": 180,
+  "maxDaysInAdvance": 30,
+  "cancellationDeadlineHours": 2,
+  "pricePerHour": 500
+}
+
+### Sto 1 (nalepi id tipa iz prethodnog odgovora)
+POST {{host}}/api/resources
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0MzQyOTQyLCJzdWIiOiI0OTIzMmZkMi03NjU1LTQ4MTMtYjljOC1iMTU1NmE5YTcyZDgiLCJlbWFpbCI6Im1hcmtvLm1hcmtvaWxpY0BnbWFpbC5jb20iLCJyb2xlIjoiT3duZXIiLCJpYXQiOjE3OTQzNDIwNDIsIm5iZiI6MTc5NDM0MjA0Mn0.zuk2VkJ6OCzbRPrEW1bcImOqiUmby1Ufkkbq_T5sdOA
+Content-Type: application/json
+
+{ "resourceTypeId": "26eee31e-dbf1-4901-b9ca-a744c762e233", "name": "Sto 1", "isActive": true }
+
+### Radno vreme
+PUT {{host}}/api/opening-hours
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0MzQyNzg5LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDM0MTg4OSwibmJmIjoxNzk0MzQxODg5fQ.PEp2AILcYgPXUMgYns6DLLkaGNzJFcplcnk_ETSCCQk
+Content-Type: application/json
+
+{
+  "days": [
+    { "dayOfWeek": "Monday",   "openTime": "09:00:00", "closeTime": "22:00:00" },
+    { "dayOfWeek": "Tuesday",  "openTime": "09:00:00", "closeTime": "22:00:00" },
+    { "dayOfWeek": "Saturday", "openTime": "10:00:00", "closeTime": "20:00:00" }
+  ]
+}
+
+### Čitanje (može i igrač)
+GET {{host}}/api/resources
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+
+### 1. Slobodni termini (nalepi id tipa stola)
+GET {{host}}/api/availability?date=2026-11-14&resourceTypeId=26eee31e-dbf1-4901-b9ca-a744c762e233
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+
+### 2. Rezervacija 18:00-19:30
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T18:00:00+01:00", "durationMinutes": 90 }
+
+### 3. Isto ponovo (očekuj 409)
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T18:00:00+01:00", "durationMinutes": 90 }
+
+### 4. Preklapanje 18:30-19:30 (očekuj 409)
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T18:30:00+01:00", "durationMinutes": 60 }
+
+### 5. Susedni termin 16:30-18:00 (očekuj 200)
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T16:30:00+01:00", "durationMinutes": 90 }
+
+### 6. Početak 18:15 (očekuj 400, nije na granici slota)
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T12:15:00+01:00", "durationMinutes": 60 }
+
+### 7. Van radnog vremena, 19:30-20:30 (očekuj 400)
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T19:30:00+01:00", "durationMinutes": 60 }
+
+### 8. Moje rezervacije
+GET {{host}}/api/bookings/my
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+
+### 9. Otkazivanje (nalepi id rezervacije)
+DELETE {{host}}/api/bookings/5710a6c3-406d-4b58-965a-368952f01180
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+
+### 10. Igrač pokušava rezervaciju za gosta (očekuj 403)
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE1MjY3LCJzdWIiOiJlNjRiNjA4Yi00MmQwLTQ4YTAtOTJmNi1kYTY3NDBhNjY3YTMiLCJlbWFpbCI6ImlncmFjQHRlc3QuY29tIiwicm9sZSI6IlBsYXllciIsImlhdCI6MTc5NDQxNDM2NywibmJmIjoxNzk0NDE0MzY3fQ.Nz4H2z9tiDKvyCnIzHbIPVKD3AwhePNWS4uFglng9ec
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T14:00:00+01:00", "durationMinutes": 60, "guestName": "Pera" }
+
+### 11. Vlasnik unosi telefonsku rezervaciju (očekuj 200)
+POST {{host}}/api/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzbG90aWZ5YXBwLWNsaWVudHMiLCJpc3MiOiJzbG90aWZ5YXBwIiwiZXhwIjoxNzk0NDE2MDQyLCJzdWIiOiI0OTIzMmZkMi03NjU1LTQ4MTMtYjljOC1iMTU1NmE5YTcyZDgiLCJlbWFpbCI6Im1hcmtvLm1hcmtvaWxpY0BnbWFpbC5jb20iLCJyb2xlIjoiT3duZXIiLCJpYXQiOjE3OTQ0MTUxNDIsIm5iZiI6MTc5NDQxNTE0Mn0.FXIBzZBUSyz7cTOT-ZIOVDCqzUygKGGdezMLivxtDeU
+Content-Type: application/json
+
+{ "resourceId": "ae5402cc-2e1e-46e9-a3f3-ea4662b7666d", "start": "2026-11-14T14:00:00+01:00", "durationMinutes": 60, "guestName": "Pera", "guestPhone": "064 123 456" }
+
+### Kalendar za dan (vlasnik)
+GET {{host}}/api/staff/bookings?date=2026-11-14
+Authorization: Bearer <ownerToken>
+
+### Blokada celog dana na svim stolovima (turnir)
+POST {{host}}/api/staff/blocks
+Authorization: Bearer <ownerToken>
+Content-Type: application/json
+
+{ "start": "2026-11-21T10:00:00+01:00", "end": "2026-11-21T16:00:00+01:00", "notes": "Turnir" }
+
+### Blokada jednog stola
+POST {{host}}/api/staff/blocks
+Authorization: Bearer <ownerToken>
+Content-Type: application/json
+
+{ "resourceId": "<resourceId>", "start": "2026-11-22T10:00:00+01:00", "end": "2026-11-22T12:00:00+01:00", "notes": "Zamena mreže" }
+
+### Označi kao propuštenu (samo za termin koji je počeo)
+POST {{host}}/api/staff/bookings/<bookingId>/no-show
+Authorization: Bearer <ownerToken>
+
+### Dodaj osoblje (korisnik se prvo registruje kao igrač)
+POST {{host}}/api/staff-members
+Authorization: Bearer <ownerToken>
+Content-Type: application/json
+
+{ "email": "igrac@test.com" }
+
+### Lista osoblja
+GET {{host}}/api/staff-members
+Authorization: Bearer <ownerToken>

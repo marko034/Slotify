@@ -1,0 +1,53 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Slotify.Application.Abstractions;
+using Slotify.Application.Auth;
+using Slotify.Application.Interfaces;
+using Slotify.Application.Staff;
+using Slotify.Infrastructure.Data;
+using Slotify.Infrastructure.Identity;
+
+namespace Slotify.Infrastructure;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("Default")
+            ?? throw new InvalidOperationException("Fali ConnectionStrings:Default.");
+
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
+
+        services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(o => o.Key.Length >= 32, "Jwt:Key mora imati najmanje 32 znaka.")
+            .ValidateOnStart();
+
+        services.AddIdentityCore<ApplicationUser>(o =>
+        {
+            o.User.RequireUniqueEmail = true;
+            o.Password.RequiredLength = 8;
+            o.Password.RequireDigit = true;
+            o.Password.RequireLowercase = true;
+            o.Password.RequireUppercase = false;
+            o.Password.RequireNonAlphanumeric = false;
+            o.Lockout.MaxFailedAccessAttempts = 5;
+            o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        })
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<AppDbContext>();
+
+        services.AddSingleton<TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserDirectory, UserDirectory>();
+        services.AddScoped<IStaffService, StaffService>();
+
+        return services;
+    }
+}

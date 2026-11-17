@@ -1,0 +1,12 @@
+# .NET
+[Bb]in/
+[Oo]bj/
+*.user
+.vs/
+*.suo
+appsettings.Development.json
+
+# Angular / Node
+node_modules/
+dist/
+.angular/

@@ -1,0 +1,6 @@
+@Slotify.Api_HostAddress = http://localhost:5118
+
+GET {{Slotify.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

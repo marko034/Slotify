@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Slotify.Api/Slotify.Api.csproj" />
+  <Project Path="Slotify.Application/Slotify.Application.csproj" Id="b141f6ba-4288-41fc-b50c-a52e5fe5a1c7" />
+  <Project Path="Slotify.Domain/Slotify.Domain.csproj" Id="406a5b3b-b2aa-4e9c-89a8-b8dad331927c" />
+  <Project Path="Slotify.Infrastructure/Slotify.Infrastructure.csproj" Id="9021d072-edaf-4588-9eb2-47178fc8dfce" />
+</Solution>
