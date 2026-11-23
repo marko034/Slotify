@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Slotify.Application.Abstractions;
+using Slotify.Application.Interfaces;
 using Slotify.Application.Common;
 using Slotify.Application.Interfaces;
 using Slotify.Domain.Entities;
@@ -14,7 +14,7 @@ public interface IBookingService
     Task<ServiceResult<List<BookingDto>>> ListMineAsync(bool includePast, CancellationToken ct);
 }
 
-public class BookingService(IAppDbContext db, ICurrentUser user, TimeProvider clock) : IBookingService
+public class BookingService(IAppDbContext db, ICurrentUser user, TimeProvider clock, BookingNotifier notifier) : IBookingService
 {
     public async Task<ServiceResult<BookingDto>> CreateAsync(CreateBookingRequest r, CancellationToken ct)
     {
@@ -100,7 +100,7 @@ public class BookingService(IAppDbContext db, ICurrentUser user, TimeProvider cl
         };
 
         db.Bookings.Add(booking);
-
+        await notifier.QueueConfirmedAsync(booking, resource.Name, ct);
         await db.SaveChangesAsync(ct);
 
         return ServiceResult<BookingDto>.Ok(ToDto(booking, resource.Name, tz));
@@ -136,6 +136,18 @@ public class BookingService(IAppDbContext db, ICurrentUser user, TimeProvider cl
         }
 
         booking.Status = BookingStatus.Cancelled;
+
+        if (booking.Kind == BookingKind.Reservation && booking.StartUtc > clock.GetUtcNow().UtcDateTime)
+        {
+            var resourceName = await db.Resources
+                .Where(r => r.Id == booking.ResourceId)
+                .Select(r => r.Name)
+                .FirstAsync(ct);
+
+            await notifier.QueueCancelledAsync(
+                booking, resourceName, byVenue: user.IsStaff && booking.UserId != user.UserId, ct);
+        }
+
         await db.SaveChangesAsync(ct);
         return ServiceResult<bool>.Ok(true);
     }

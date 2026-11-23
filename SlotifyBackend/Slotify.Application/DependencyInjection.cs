@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using Slotify.Application.Bookings;
+using Slotify.Application.Email;
 using Slotify.Application.OpeningHoursSettings;
 using Slotify.Application.Resources;
 using Slotify.Application.ResourceTypes;
@@ -19,6 +20,9 @@ public static class DependencyInjection
         services.AddScoped<IAvailabilityService, AvailabilityService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IStaffBookingService, StaffBookingService>();
+        services.AddScoped<IEmailOutbox, EmailOutbox>();
+        services.AddScoped<BookingNotifier>();
+        services.AddScoped<IReminderService, ReminderService>();
         return services;
     }
 }

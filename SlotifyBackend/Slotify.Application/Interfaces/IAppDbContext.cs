@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Slotify.Domain.Entities;
 
-namespace Slotify.Application.Abstractions;
+namespace Slotify.Application.Interfaces;
 
 public interface IAppDbContext
 {
@@ -10,6 +10,7 @@ public interface IAppDbContext
     DbSet<Resource> Resources { get; }
     DbSet<OpeningHours> OpeningHours { get; }
     DbSet<Booking> Bookings { get; }
+    DbSet<EmailMessage> EmailMessages { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

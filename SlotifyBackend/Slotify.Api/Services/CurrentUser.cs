@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Slotify.Application.Abstractions;
+using Slotify.Application.Interfaces;
 using Slotify.Domain.Constants;
 using Slotify.Application.Interfaces;
 

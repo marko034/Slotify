@@ -15,4 +15,5 @@ public class Booking
     public string? GuestPhone { get; set; }
     public string? Notes { get; set; }
     public DateTime CreatedUtc { get; set; }
+    public DateTime? ReminderSentUtc { get; set; }
 }

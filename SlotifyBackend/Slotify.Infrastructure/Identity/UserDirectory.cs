@@ -11,4 +11,10 @@ public class UserDirectory(AppDbContext db) : IUserDirectory
         await db.Users
             .Where(u => userIds.Contains(u.Id))
             .ToDictionaryAsync(u => u.Id, u => u.FullName ?? u.Email ?? "", ct);
+
+    public async Task<Dictionary<string, UserContact>> GetContactsAsync(
+        IReadOnlyCollection<string> userIds, CancellationToken ct) =>
+        await db.Users
+            .Where(u => userIds.Contains(u.Id) && u.Email != null)
+            .ToDictionaryAsync(u => u.Id, u => new UserContact(u.Email!, u.FullName ?? u.Email!), ct);
 }

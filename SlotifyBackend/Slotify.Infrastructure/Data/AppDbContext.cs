@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Slotify.Application.Abstractions;
+using Slotify.Application.Interfaces;
 using Slotify.Domain.Entities;
 using Slotify.Infrastructure.Identity;
 using Npgsql;
@@ -18,6 +18,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>, IAppDbContext
     public DbSet<OpeningHours> OpeningHours => Set<OpeningHours>();
     public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<EmailMessage> EmailMessages => Set<EmailMessage>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {

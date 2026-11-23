@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Slotify.Application.Abstractions;
+using Slotify.Application.Interfaces;
 using Slotify.Application.Common;
 using Slotify.Domain.Enums;
 
