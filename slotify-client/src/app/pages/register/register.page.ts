@@ -113,7 +113,7 @@ export class RegisterPage {
       .register(email, password, fullName)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => void this.router.navigateByUrl('/'),
+        next: () => void this.router.navigate(['/check-email'], { queryParams: { email } }),
         error: (e) => this.error.set(apiErrorMessage(e)),
       });
   }

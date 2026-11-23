@@ -12,8 +12,9 @@ import {
   IonToolbar,
 } from '@ionic/angular';
 import { finalize } from 'rxjs';
-import { apiErrorMessage } from '../../core/api-error';
+import { apiErrorCode, apiErrorMessage } from '../../core/api-error';
 import { AuthService } from '../../core/auth.service';
+import { ToastService } from '../../core/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,7 @@ import { AuthService } from '../../core/auth.service';
       <ion-toolbar><ion-title>Slotify</ion-title></ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="page form">
         <h2>Prijava</h2>
         <ion-input
           label="Email"
@@ -58,33 +59,32 @@ import { AuthService } from '../../core/auth.service';
           <ion-text color="danger"><p>{{ error() }}</p></ion-text>
         }
 
+        @if (notConfirmed()) {
+          <ion-button fill="outline" expand="block" [disabled]="resending()" (click)="resend()">
+            Pošalji link za potvrdu ponovo
+          </ion-button>
+        }
+
         <ion-button type="submit" expand="block" [disabled]="form.invalid || loading()">
           @if (loading()) { <ion-spinner name="dots" /> } @else { Prijavi se }
         </ion-button>
 
+        <p class="ion-text-center"><a routerLink="/forgot-password">Zaboravljena lozinka?</a></p>
         <p class="ion-text-center">Nemaš nalog? <a routerLink="/register">Registruj se</a></p>
       </form>
     </ion-content>
   `,
-  styles: [
-    `
-      .auth-form {
-        max-width: 420px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-    `,
-  ],
 })
 export class LoginPage {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   protected readonly loading = signal(false);
+  protected readonly resending = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly notConfirmed = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -96,6 +96,7 @@ export class LoginPage {
 
     this.loading.set(true);
     this.error.set(null);
+    this.notConfirmed.set(false);
     const { email, password } = this.form.getRawValue();
 
     this.auth
@@ -103,7 +104,24 @@ export class LoginPage {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => void this.router.navigateByUrl('/'),
-        error: (e) => this.error.set(apiErrorMessage(e)),
+        error: (e) => {
+          this.error.set(apiErrorMessage(e));
+          this.notConfirmed.set(apiErrorCode(e) === 'email_not_confirmed');
+        },
+      });
+  }
+
+  protected resend(): void {
+    const email = this.form.getRawValue().email;
+    if (!email || this.resending()) return;
+
+    this.resending.set(true);
+    this.auth
+      .resendConfirmation(email)
+      .pipe(finalize(() => this.resending.set(false)))
+      .subscribe({
+        next: () => void this.toast.success('Poslali smo novi link. Proveri email.'),
+        error: (e) => void this.toast.error(apiErrorMessage(e)),
       });
   }
 }

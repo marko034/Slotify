@@ -23,3 +23,9 @@ export function apiErrorMessage(
   if (err.status >= 500) return 'Greška na serveru. Pokušaj ponovo kasnije.';
   return fallback;
 }
+
+export function apiErrorCode(err: unknown): string | null {
+  return err instanceof HttpErrorResponse && typeof err.error?.code === 'string'
+    ? err.error.code
+    : null;
+}

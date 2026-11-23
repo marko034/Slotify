@@ -86,10 +86,41 @@ export class AuthService {
       .pipe(tap((r) => this.apply(r)));
   }
 
-  register(email: string, password: string, fullName: string): Observable<AuthResponse> {
+  /** Registracija više ne prijavljuje korisnika: prvo mora da potvrdi email. */
+  register(email: string, password: string, fullName: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/register`, { email, password, fullName });
+  }
+
+  confirmEmail(userId: string, token: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/confirm-email`, { userId, token });
+  }
+
+  resendConfirmation(email: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/resend-confirmation`, { email });
+  }
+
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/forgot-password`, { email });
+  }
+
+  resetPassword(userId: string, token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/reset-password`, { userId, token, newPassword });
+  }
+
+  /** Server prekida ostale sesije, a ovoj vraća nove tokene. */
+  changePassword(currentPassword: string, newPassword: string): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${this.base}/register`, { email, password, fullName })
+      .post<AuthResponse>(`${this.base}/change-password`, { currentPassword, newPassword })
       .pipe(tap((r) => this.apply(r)));
+  }
+
+  deleteAccount(password: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/delete-account`, { password }).pipe(
+      tap(() => {
+        this.clearSession();
+        void this.router.navigateByUrl('/login');
+      }),
+    );
   }
 
   /**

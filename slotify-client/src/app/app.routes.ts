@@ -73,5 +73,24 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'book' },
     ],
   },
+  {
+    path: 'check-email',
+    loadComponent: () => import('./pages/check-email/check-email.page').then((m) => m.CheckEmailPage),
+  },
+  {
+    path: 'confirm-email',
+    loadComponent: () => import('./pages/confirm-email/confirm-email.page').then((m) => m.ConfirmEmailPage),
+  },
+  {
+    path: 'forgot-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./pages/forgot-password/forgot-password.page').then((m) => m.ForgotPasswordPage),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./pages/reset-password/reset-password.page').then((m) => m.ResetPasswordPage),
+  },
   { path: '**', redirectTo: '' },
 ];
